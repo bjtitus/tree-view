@@ -4,6 +4,7 @@ shell = require 'shell'
 _ = require 'underscore-plus'
 {$, ScrollView} = require 'atom'
 fs = require 'fs-plus'
+reveal = require 'reveal-in-manager'
 
 AddDialog = null  # Defer requiring until actually needed
 MoveDialog = null # Defer requiring until actually needed
@@ -46,6 +47,7 @@ class TreeView extends ScrollView
     @command 'tree-view:remove', => @removeSelectedEntry()
     @command 'tree-view:copy-full-path', => @copySelectedEntryPath(false)
     @command 'tree-view:copy-project-path', => @copySelectedEntryPath(true)
+    @command 'tree-view:show-in-manager', => @showInManager()
     @command 'tool-panel:unfocus', => @unfocus()
 
     @on 'tree-view:directory-modified', =>
@@ -194,6 +196,10 @@ class TreeView extends ScrollView
     if pathToCopy = @selectedPath
       pathToCopy = atom.project.relativize(pathToCopy) if relativePath
       atom.clipboard.write(pathToCopy)
+
+  showInManager: ->
+    if pathToShow = @selectedPath
+      reveal(pathToShow)
 
   entryForPath: (entryPath) ->
     fn = (bestMatchEntry, element) ->
